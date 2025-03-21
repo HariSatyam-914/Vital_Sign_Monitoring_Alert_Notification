@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Health Predictions</title>
-</head>
-<body>
-    <h2>Health Predictions</h2>
-    <table border="1">
-        <tr>
-            <th>Patient Name</th>
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Health Status</th>
-        </tr>
-        {% for p in predictions %}
-        <tr>
-            <td>{{ p.patient.first_name }} {{ p.patient.last_name }}</td>
-            <td>{{ p.patient.age }}</td>
-            <td>{{ p.patient.gender }}</td>
-            <td>{{ p.health_status }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <button class="btn btn-secondary mb-3" onclick="window.history.back()">⬅ Back</button>
+
+    <h2>Predict My Health</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Check My Health</button>
+    </form>
+
+    {% if health_status %}
+        <div class="alert alert-info mt-3">
+            <h3>Prediction Result: {{ health_status }}</h3>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

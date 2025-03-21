@@ -15,9 +15,10 @@ import csv
 from django.http import HttpResponse
 import logging
 import numpy as np
+import os
+import pandas as pd
 import joblib
-import tensorflow as tf
-
+import xgboost as xgb
 
 # Create your views here.
 def home(request):
@@ -223,31 +224,40 @@ def export_csv(request):
     return response
 
 
-# Load trained LSTM model & scaler
-model = tf.keras.models.load_model("/mnt/data/lstm_health_model.h5")
-scaler = joblib.load("/mnt/data/scaler.pkl")
+# Load the trained model and scalers
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'xgboost_vital_signs_model.json')
+SCALER_PATH = os.path.join(os.path.dirname(__file__), 'scaler.pkl')
+LABEL_ENCODER_PATH = os.path.join(os.path.dirname(__file__), 'label_encoder.pkl')
 
-def predict_health(request):
-    patients = Patient.objects.all()  # Fetch patient records from DB
-    
-    predictions = []
+model = xgb.XGBClassifier()
+model.load_model(MODEL_PATH)
+scaler = joblib.load(SCALER_PATH)
+label_encoder = joblib.load(LABEL_ENCODER_PATH)
 
-    for patient in patients:
-        # Prepare data for LSTM (same feature order as training)
-        input_data = np.array([[patient.body_temperature, patient.spo2, patient.heart_rate,
-                                 patient.respiration_rate, patient.blood_pressure_systolic, 
-                                 patient.blood_pressure_diastolic]])
-        
-        # Normalize data
-        input_data = scaler.transform(input_data)
-        input_data = input_data.reshape((1, 1, input_data.shape[1]))  # Reshape for LSTM
+def predict_my_health(request):
+    if request.method == "POST":
+        # Get latest patient data from database
+        patient = PatientInfo.objects.latest('id')
 
-        # Predict
-        prediction = model.predict(input_data)
-        predicted_class = np.argmax(prediction)  # Get class with highest probability
+        # Convert data to DataFrame
+        patient_data = pd.DataFrame([{
+            'HeartRate': patient.heart_rate,
+            'BloodPressure_Systolic': patient.blood_pressure_systolic,
+            'BloodPressure_Diastolic': patient.blood_pressure_diastolic,
+            'OxygenSaturation': patient.oxygen_saturation,
+            'Temperature': patient.temperature,
+            'RespiratoryRate': patient.respiratory_rate
+        }])
 
-        # Convert class to label
-        status = {0: "Healthy", 1: "At Risk", 2: "Diseased"}
-        predictions.append({"patient": patient, "health_status": status[predicted_class]})
+        # Scale the input
+        patient_scaled = scaler.transform(patient_data)
 
-    return render(request, "predict_health.html", {"predictions": predictions})
+        # Predict using the trained model
+        prediction = model.predict(patient_scaled)
+
+        # Decode label
+        health_status = label_encoder.inverse_transform(prediction)[0]
+
+        return render(request, "predict_health.html", {"health_status": health_status})
+
+    return render(request, "predict_health.html")
