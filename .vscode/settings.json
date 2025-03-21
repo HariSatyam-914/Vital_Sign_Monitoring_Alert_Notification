@@ -13,6 +13,21 @@
             "database": "sys1",
             "username": "root",
             "password": "harisatyam"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "Vitaldb",
+            "database": "vitaldb",
+            "username": "root",
+            "password": "harisatyam",
+            "connectionTimeout": 30
         }
     ]
 }

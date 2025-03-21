@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-
+from .models import PatientReport
 
 class RegistrationForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -25,3 +25,10 @@ class RegistrationForm(UserCreationForm):
 		
 		self.fields['password2'].widget.attrs['class'] = 'form-control'
 		self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
+
+
+
+class PatientReportForm(forms.ModelForm):
+    class Meta:
+        model = PatientReport
+        fields = '__all__'  # Or explicitly include 'report_pdf'

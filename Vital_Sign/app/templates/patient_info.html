@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,21 +12,25 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h2 class="mb-4">Patient Information</h2>
-        <table class="table table-bordered">
-            <thead>
+        <button class="btn btn-secondary mb-3" onclick="window.history.back()">⬅ Back</button>
+        <h2 class="text-center mb-4">Patient Information</h2>
+
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
                 <tr>
                     <th>ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
+                    <th>Patient Name</th>
                     <th>Age</th>
                     <th>Gender</th>
-                    <th>Phone</th>
-                    <th>Body Temperature (°C)</th>
+                    <th>Phone Number</th>
+                    <th>Temperature (°C)</th>
                     <th>SpO2 (%)</th>
                     <th>Heart Rate (bpm)</th>
                     <th>Respiration Rate</th>
-                    <th>Blood Pressure (Systolic/Diastolic)</th>
+                    <th>BP (Systolic/Diastolic)</th>
+                    <th>Medical Report</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +39,7 @@
                     <td>{{ patient.id }}</td>
                     <td>{{ patient.first_name }}</td>
                     <td>{{ patient.last_name }}</td>
+                    <td>{{ patient.patient_name }}</td>
                     <td>{{ patient.age }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.phone_number }}</td>
@@ -39,10 +48,17 @@
                     <td>{{ patient.heart_rate }}</td>
                     <td>{{ patient.respiration_rate }}</td>
                     <td>{{ patient.blood_pressure_systolic }}/{{ patient.blood_pressure_diastolic }}</td>
+                    <td>
+                        {% if patient.report_pdf %}
+                        <a href="{{ patient.report_pdf.url }}" target="_blank" class="btn btn-primary btn-sm">View Report</a>
+                        {% else %}
+                        No Report
+                        {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="11" class="text-center">No patients found.</td>
+                    <td colspan="13" class="text-center">No patients found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -52,3 +68,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+{% endblock %}

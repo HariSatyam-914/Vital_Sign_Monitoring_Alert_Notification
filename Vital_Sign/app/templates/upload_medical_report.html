@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Upload Medical Report</h2>
+
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" class="mt-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="medical_report" class="form-label">Choose a PDF file:</label>
+            <input type="file" class="form-control" id="medical_report" name="medical_report" accept=".pdf" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+
+    <!-- Display Extracted Data -->
+    {% if extracted_data %}
+    <div class="mt-4">
+        <h3>Extracted Patient Information:</h3>
+        <table class="table table-bordered mt-2">
+            <tbody>
+                <tr>
+                    <th>Patient Name:</th>
+                    <td>{{ extracted_data.patient_name }}</td>
+                </tr>
+                <tr>
+                    <th>Age:</th>
+                    <td>{{ extracted_data.age }}</td>
+                </tr>
+                <tr>
+                    <th>Gender:</th>
+                    <td>{{ extracted_data.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Phone Number:</th>
+                    <td>{{ extracted_data.phone_number }}</td>
+                </tr>
+                <tr>
+                    <th>Body Temperature (°C):</th>
+                    <td>{{ extracted_data.body_temperature }}</td>
+                </tr>
+                <tr>
+                    <th>SpO2 (%):</th>
+                    <td>{{ extracted_data.spo2 }}</td>
+                </tr>
+                <tr>
+                    <th>Heart Rate (bpm):</th>
+                    <td>{{ extracted_data.heart_rate }}</td>
+                </tr>
+                <tr>
+                    <th>Respiration Rate:</th>
+                    <td>{{ extracted_data.respiration_rate }}</td>
+                </tr>
+                <tr>
+                    <th>Blood Pressure (Systolic/Diastolic):</th>
+                    <td>{{ extracted_data.blood_pressure_systolic }}/{{ extracted_data.blood_pressure_diastolic }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <button class="btn btn-secondary mt-3" onclick="window.history.back()">⬅ Back</button>
+</div>
+{% endblock %}

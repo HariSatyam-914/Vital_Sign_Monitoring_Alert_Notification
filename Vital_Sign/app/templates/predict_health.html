@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Health Predictions</title>
+</head>
+<body>
+    <h2>Health Predictions</h2>
+    <table border="1">
+        <tr>
+            <th>Patient Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Health Status</th>
+        </tr>
+        {% for p in predictions %}
+        <tr>
+            <td>{{ p.patient.first_name }} {{ p.patient.last_name }}</td>
+            <td>{{ p.patient.age }}</td>
+            <td>{{ p.patient.gender }}</td>
+            <td>{{ p.health_status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

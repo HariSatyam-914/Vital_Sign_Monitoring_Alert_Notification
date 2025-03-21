@@ -4,10 +4,10 @@
 
 <div class="container mt-4">
     <h2 class="text-center mb-4">Dashboard</h2>
-    
-    <div class="row">
-        Patient Info
-        <div class="col-md-3">
+
+    <div class="row justify-content-center">
+        <!-- Patient Info -->
+        <div class="col-md-3 mb-4">
             <div class="card shadow-lg text-center">
                 <div class="card-body">
                     <h5 class="card-title">Patient Info</h5>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- Patient Details -->
-        <div class="col-md-3">
+        <div class="col-md-3 mb-4">
             <div class="card shadow-lg text-center">
                 <div class="card-body">
                     <h5 class="card-title">Patient Details</h5>
@@ -28,24 +28,24 @@
             </div>
         </div>
 
-        <!-- Predict My Health -->
-        <div class="col-md-3">
-            <div class="card shadow-lg text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Predict My Health</h5>
-                    <p class="card-text">Run AI-based health prediction on your vital signs.</p>
-                    <a href="{% url 'predict_health' %}" class="btn btn-warning">Predict</a>
-                </div>
-            </div>
-        </div>
-
         <!-- Upload Medical Report -->
-        <div class="col-md-3">
+        <div class="col-md-3 mb-4">
             <div class="card shadow-lg text-center">
                 <div class="card-body">
                     <h5 class="card-title">Upload Medical Report</h5>
                     <p class="card-text">Upload a medical report in PDF format for analysis.</p>
-                    <a href="{% url 'upload_report' %}" class="btn btn-danger">Upload</a>
+                    <a href="{% url 'upload_medical_report' %}" class="btn btn-warning">Upload</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predict My Health -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Predict My Health</h5>
+                    <p class="card-text">Run AI-based health prediction on your vital signs.</p>
+                    <a href="{% url 'predict_health' %}" class="btn btn-danger">Predict</a>
                 </div>
             </div>
         </div>
