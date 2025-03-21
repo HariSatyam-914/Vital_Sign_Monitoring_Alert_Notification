@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Dashboard</h2>
+    
+    <div class="row">
+        Patient Info
+        <div class="col-md-3">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Info</h5>
+                    <p class="card-text">View and manage patient personal details.</p>
+                    <a href="{% url 'patient_info' %}" class="btn btn-primary">View Info</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Details -->
+        <div class="col-md-3">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Details</h5>
+                    <p class="card-text">Check detailed medical history and vital signs.</p>
+                    <a href="{% url 'patient_details' %}" class="btn btn-success">Add Details</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Predict My Health -->
+        <div class="col-md-3">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Predict My Health</h5>
+                    <p class="card-text">Run AI-based health prediction on your vital signs.</p>
+                    <a href="{% url 'predict_health' %}" class="btn btn-warning">Predict</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Medical Report -->
+        <div class="col-md-3">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Upload Medical Report</h5>
+                    <p class="card-text">Upload a medical report in PDF format for analysis.</p>
+                    <a href="{% url 'upload_report' %}" class="btn btn-danger">Upload</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
