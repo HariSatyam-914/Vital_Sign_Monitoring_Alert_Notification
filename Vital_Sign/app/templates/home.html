@@ -8,10 +8,18 @@
         background-size: cover;
     }
 
+    /* Center the welcome text and button */
     .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh; /* Adjust height to ensure content stays centered */
         text-align: center;
+    }
+
+    .content-box {
         background: rgba(255, 255, 255, 0.8); /* Light background for visibility */
-        padding: 20px;
+        padding: 30px;
         border-radius: 10px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     }
@@ -23,27 +31,29 @@
     }
 </style>
 
-<div class="col-md-6 offset-md-3">
-    {% if user.is_authenticated %}
-        <h1> Welcome New User</h1>
-        <a href="{% url 'dashboard'%}" class="btn btn-primary btn-custom">Click Me</a>
-    {% else %}
-        <h1>Login</h1>
-        <br/>
-        <form method="post" action="{% url 'home' %}">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" placeholder="Username" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
-            </div>
+<div class="center-container">
+    <div class="content-box">
+        {% if user.is_authenticated %}
+            <h1>Welcome New User</h1>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-custom">Enter</a>
+        {% else %}
+            <h1>Login</h1>
             <br/>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    {% endif %}
+            <form method="post" action="{% url 'home' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" placeholder="Username" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}
