@@ -34,7 +34,7 @@
 <div class="center-container">
     <div class="content-box">
         {% if user.is_authenticated %}
-            <h1>Welcome New User</h1>
+            <h1>Welcome {{ user.username }}</h1>
             <a href="{% url 'dashboard' %}" class="btn btn-primary btn-custom">Enter</a>
         {% else %}
             <h1>Login</h1>

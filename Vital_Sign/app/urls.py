@@ -16,5 +16,8 @@ urlpatterns = [
     path('edit-patient/<int:patient_id>/', views.edit_patient, name='edit_patient'),
     path('export_csv/', views.export_csv, name='export_csv'),
     path('predict-health/', views.predict_health, name='predict_health'),
+    path("add-extracted-data/", views.add_extracted_data, name="add_extracted_data"),
+    path('add-patient-details/', views.add_patient_details, name='add_patient_details'),
+    path('save-patient-details/', views.save_patient_details, name='save_patient_details'),
 ]
 

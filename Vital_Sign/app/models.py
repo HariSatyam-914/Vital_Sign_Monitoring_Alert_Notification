@@ -50,3 +50,18 @@ class PatientInfo(models.Model):
 
     def __str__(self):
         return self.patient_name
+    
+class PatientDetails(models.Model):
+    patient_name = models.CharField(max_length=255)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    body_temperature = models.FloatField()
+    spo2 = models.FloatField()
+    heart_rate = models.IntegerField()
+    respiration_rate = models.IntegerField()
+    blood_pressure_systolic = models.IntegerField()
+    blood_pressure_diastolic = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.patient_name} - {self.age} years"

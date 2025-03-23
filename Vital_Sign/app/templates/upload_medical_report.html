@@ -17,50 +17,44 @@
 
     <!-- Display Extracted Data -->
     {% if extracted_data %}
-    <div class="mt-4">
-        <h3>Extracted Patient Information:</h3>
-        <table class="table table-bordered mt-2">
-            <tbody>
-                <tr>
-                    <th>Patient Name:</th>
-                    <td>{{ extracted_data.patient_name }}</td>
-                </tr>
-                <tr>
-                    <th>Age:</th>
-                    <td>{{ extracted_data.age }}</td>
-                </tr>
-                <tr>
-                    <th>Gender:</th>
-                    <td>{{ extracted_data.gender }}</td>
-                </tr>
-                <tr>
-                    <th>Phone Number:</th>
-                    <td>{{ extracted_data.phone_number }}</td>
-                </tr>
-                <tr>
-                    <th>Body Temperature (°C):</th>
-                    <td>{{ extracted_data.body_temperature }}</td>
-                </tr>
-                <tr>
-                    <th>SpO2 (%):</th>
-                    <td>{{ extracted_data.spo2 }}</td>
-                </tr>
-                <tr>
-                    <th>Heart Rate (bpm):</th>
-                    <td>{{ extracted_data.heart_rate }}</td>
-                </tr>
-                <tr>
-                    <th>Respiration Rate:</th>
-                    <td>{{ extracted_data.respiration_rate }}</td>
-                </tr>
-                <tr>
-                    <th>Blood Pressure (Systolic/Diastolic):</th>
-                    <td>{{ extracted_data.blood_pressure_systolic }}/{{ extracted_data.blood_pressure_diastolic }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
+<div class="mt-4">
+    <h3>Extracted Patient Information:</h3>
+    <table class="table table-bordered mt-2">
+        <tbody>
+            <tr><th>First Name:</th><td>{{ extracted_data.first_name }}</td></tr>
+            <tr><th>Last Name:</th><td>{{ extracted_data.last_name }}</td></tr>
+            <tr><th>Age:</th><td>{{ extracted_data.age }}</td></tr>
+            <tr><th>Gender:</th><td>{{ extracted_data.gender }}</td></tr>
+            <tr><th>Phone Number:</th><td>{{ extracted_data.phone_number }}</td></tr>
+            <tr><th>Body Temperature (°C):</th><td>{{ extracted_data.body_temperature }}</td></tr>
+            <tr><th>SpO2 (%):</th><td>{{ extracted_data.spo2 }}</td></tr>
+            <tr><th>Heart Rate (bpm):</th><td>{{ extracted_data.heart_rate }}</td></tr>
+            <tr><th>Respiration Rate:</th><td>{{ extracted_data.respiration_rate }}</td></tr>
+            <tr><th>Blood Pressure (Systolic/Diastolic):</th><td>{{ extracted_data.blood_pressure_systolic }}/{{ extracted_data.blood_pressure_diastolic }}</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Auto-submit extracted data -->
+    <form method="POST" action="{% url 'add_patient_details' %}">
+        {% csrf_token %}
+        <input type="hidden" name="first_name" value="{{ extracted_data.first_name }}">
+        <input type="hidden" name="last_name" value="{{ extracted_data.last_name }}">
+        <input type="hidden" name="age" value="{{ extracted_data.age }}">
+        <input type="hidden" name="gender" value="{{ extracted_data.gender }}">
+        <input type="hidden" name="phone_number" value="{{ extracted_data.phone_number }}">
+        <input type="hidden" name="body_temperature" value="{{ extracted_data.body_temperature }}">
+        <input type="hidden" name="spo2" value="{{ extracted_data.spo2 }}">
+        <input type="hidden" name="heart_rate" value="{{ extracted_data.heart_rate }}">
+        <input type="hidden" name="respiration_rate" value="{{ extracted_data.respiration_rate }}">
+        <input type="hidden" name="blood_pressure_systolic" value="{{ extracted_data.blood_pressure_systolic }}">
+        <input type="hidden" name="blood_pressure_diastolic" value="{{ extracted_data.blood_pressure_diastolic }}">
+
+        <button type="submit" class="btn btn-success">➕ Add to Patient Details</button>
+    </form>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">✅ OK</a>
+</div>
+{% endif %}
 
     <!-- Back Button -->
     <button class="btn btn-secondary mt-3" onclick="window.history.back()">⬅ Back</button>

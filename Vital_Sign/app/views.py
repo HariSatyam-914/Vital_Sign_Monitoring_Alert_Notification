@@ -7,7 +7,7 @@ from .forms import RegistrationForm
 from .models import Patient
 from .forms import PatientReportForm
 from .utils import extract_patient_data  # Import the extraction function
-from .models import PatientReport
+from .models import PatientDetails  # Import your model
 from django.core.files.storage import default_storage
 from django.core.files.storage import FileSystemStorage
 from .models import PatientInfo
@@ -19,6 +19,10 @@ import os
 import pandas as pd
 import joblib
 import xgboost as xgb
+import fitz  # PyMuPDF for PDF extraction
+from .forms import PatientForm 
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 def home(request):
@@ -172,18 +176,39 @@ def extract_patient_data(pdf_path):
     return data
 
 def upload_medical_report(request):
-    extracted_data = None  # Initialize extracted data
+    extracted_data = {}
 
-    if request.method == "POST" and request.FILES.get("medical_report"):
-        uploaded_file = request.FILES["medical_report"]
-        fs = FileSystemStorage()
-        file_path = fs.save(uploaded_file.name, uploaded_file)
-        file_path = fs.path(file_path)
+    if request.method == "POST" and "medical_report" in request.FILES:
+        pdf_file = request.FILES["medical_report"]
+        doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
 
-        extracted_data = extract_patient_data(file_path)  # Extract info from PDF
+        text = ""
+        for page in doc:
+            text += page.get_text("text") + "\n"
 
-        # Save data to database (Optional)
-        patient = PatientInfo.objects.create(
+        # Dummy extraction logic (replace with actual extraction code)
+        extracted_data = {
+            "patient_name": "John Doe",  # Extracted from text
+            "age": 32,
+            "gender": "Male",
+            "phone_number": "9876543210",
+            "body_temperature": "37.2",
+            "spo2": "98",
+            "heart_rate": "75",
+            "respiration_rate": "16",
+            "blood_pressure_systolic": "120",
+            "blood_pressure_diastolic": "80",
+        }
+
+        request.session["extracted_data"] = extracted_data  # Store in session
+
+    return render(request, "upload_medical_report.html", {"extracted_data": extracted_data})
+
+def add_extracted_data(request):
+    extracted_data = request.session.get("extracted_data")
+
+    if extracted_data:
+        PatientDetails.objects.create(
             patient_name=extracted_data["patient_name"],
             age=extracted_data["age"],
             gender=extracted_data["gender"],
@@ -195,11 +220,9 @@ def upload_medical_report(request):
             blood_pressure_systolic=extracted_data["blood_pressure_systolic"],
             blood_pressure_diastolic=extracted_data["blood_pressure_diastolic"],
         )
-        patient.save()
+        del request.session["extracted_data"]  # Clear session after saving
 
-    return render(request, "upload_medical_report.html", {"extracted_data": extracted_data})
-
-
+    return redirect("patient_details")  # Redirect to patient details page
 logger = logging.getLogger(__name__)
 
 def export_csv(request):
@@ -261,3 +284,66 @@ def predict_my_health(request):
         return render(request, "predict_health.html", {"health_status": health_status})
 
     return render(request, "predict_health.html")
+
+# def patients_list(request):
+#     patients = Patient.objects.all()  # Fetch all patients from the database
+#     return render(request, 'patients_list.html', {'patients': patients})
+
+@csrf_exempt  # Only for testing, use proper CSRF protection in production
+def add_patient_details(request):
+    if request.method == "POST":
+        # Get extracted data from the request
+        first_name = request.POST.get("first_name", "Unknown")
+        last_name = request.POST.get("last_name", "Unknown")
+        age = request.POST.get("age", "0")
+        gender = request.POST.get("gender", "Unknown")
+        phone_number = request.POST.get("phone_number", "")
+        body_temperature = request.POST.get("body_temperature", "")
+        spo2 = request.POST.get("spo2", "")
+        heart_rate = request.POST.get("heart_rate", "")
+        respiration_rate = request.POST.get("respiration_rate", "")
+        blood_pressure_systolic = request.POST.get("blood_pressure_systolic", "")
+        blood_pressure_diastolic = request.POST.get("blood_pressure_diastolic", "")
+
+        # Save extracted data to the Patient model
+        new_patient = Patient.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            age=int(age),
+            gender=gender,
+            phone_number=phone_number,
+            body_temperature=body_temperature,
+            spo2=int(spo2),
+            heart_rate=int(heart_rate),
+            respiration_rate=int(respiration_rate),
+            blood_pressure_systolic=int(blood_pressure_systolic),
+            blood_pressure_diastolic=int(blood_pressure_diastolic),
+        )
+
+        # Redirect to the patient details page after saving
+        return redirect("patient_details")
+
+    return redirect("dashboard")  # Redirect if accessed via GET
+
+
+def save_patient_details(request):
+    if request.method == "POST":
+        # Create and save a new Patient object with extracted data
+        patient = Patient.objects.create(
+            first_name=request.POST.get("first_name"),
+            last_name=request.POST.get("last_name"),
+            age=request.POST.get("age"),
+            gender=request.POST.get("gender"),
+            phone_number=request.POST.get("phone_number"),
+            body_temperature=request.POST.get("body_temperature"),
+            spo2=request.POST.get("spo2"),
+            heart_rate=request.POST.get("heart_rate"),
+            respiration_rate=request.POST.get("respiration_rate"),
+            blood_pressure_systolic=request.POST.get("blood_pressure_systolic"),
+            blood_pressure_diastolic=request.POST.get("blood_pressure_diastolic")
+        )
+
+        # Redirect to Patient Details page after saving
+        return redirect("patient_details")
+
+    return redirect("dashboard")  # Redirect to dashboard if accessed via GET
