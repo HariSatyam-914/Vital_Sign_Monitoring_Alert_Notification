@@ -19,5 +19,7 @@ urlpatterns = [
     path("add-extracted-data/", views.add_extracted_data, name="add_extracted_data"),
     path('add-patient-details/', views.add_patient_details, name='add_patient_details'),
     path('save-patient-details/', views.save_patient_details, name='save_patient_details'),
+    path('api/get_patient_count/', views.get_patient_count, name='get_patient_count'),
+    #path('dashboard/', views.dashboard, name='dashboard'),
 ]
 

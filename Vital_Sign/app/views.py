@@ -347,3 +347,17 @@ def save_patient_details(request):
         return redirect("patient_details")
 
     return redirect("dashboard")  # Redirect to dashboard if accessed via GET
+
+from django.shortcuts import render
+from .models import Patient  # Ensure you have a Patient model
+
+def dashboard_view(request):
+    total_patients = Patient.objects.count()  # Get total number of patients
+    return render(request, 'dashboard.html', {'total_patients': total_patients})
+
+from django.http import JsonResponse
+
+def get_patient_count(request):
+    total_patients = Patient.objects.count()
+    return JsonResponse({'total_patients': total_patients})
+
