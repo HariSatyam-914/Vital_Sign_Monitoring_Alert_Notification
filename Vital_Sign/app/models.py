@@ -5,14 +5,15 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=100)
     age = models.IntegerField()
     gender = models.CharField(max_length=10)
-    phone_number = models.CharField(max_length=20)
-    body_temperature = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=10)
+    body_temperature = models.FloatField()
     spo2 = models.IntegerField()
     heart_rate = models.IntegerField()
     respiration_rate = models.IntegerField()
     blood_pressure_systolic = models.IntegerField()
     blood_pressure_diastolic = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    #report_pdf = models.FileField(upload_to='reports/', null=True, blank=True)
     
 
     def __str__(self):

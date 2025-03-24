@@ -121,8 +121,17 @@ def add_patient(request):
     return render(request, 'patient_details.html')
 
 
-def predict_health(request):
-    return render(request, 'predict_health.html')
+def predict_health(request, patient_id=None):
+    if patient_id:
+        patient = get_object_or_404(Patient, id=patient_id)
+        # Process prediction for this specific patient
+        # Example: Run ML model on patient's data
+        health_status = "Healthy"  # Replace with your ML model's output
+
+        return render(request, 'predict_health.html', {'patient': patient, 'health_status': health_status})
+
+    patients = Patient.objects.all()
+    return render(request, 'predict_health.html', {'patients': patients})
 
 def upload_report(request):
     return render(request, 'upload_report.html')
