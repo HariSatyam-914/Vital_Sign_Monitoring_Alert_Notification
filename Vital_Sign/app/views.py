@@ -121,17 +121,77 @@ def add_patient(request):
     return render(request, 'patient_details.html')
 
 
+# Load trained XGBoost model and preprocessors
+xgb_model = xgb.XGBClassifier()
+xgb_model.load_model("app/xgboost_vital_signs_model.json")  # Load the trained model
+scaler = joblib.load("app/scaler.pkl")  # Load the saved scaler
+label_encoder = joblib.load("app/label_encoder.pkl")  # Load the label encoder
+
 def predict_health(request, patient_id=None):
+    patients = Patient.objects.all()  # Load all patient records
+    health_status = None
+    patient = None
+
     if patient_id:
-        patient = get_object_or_404(Patient, id=patient_id)
-        # Process prediction for this specific patient
-        # Example: Run ML model on patient's data
-        health_status = "Healthy"  # Replace with your ML model's output
+        patient = get_object_or_404(Patient, id=patient_id)  # Fetch specific patient
 
-        return render(request, 'predict_health.html', {'patient': patient, 'health_status': health_status})
+        if request.method == "POST":
+            try:
+                # ✅ Extract input values
+                heart_rate = request.POST.get("heart_rate")
+                respiration_rate = request.POST.get("respiration_rate")
+                body_temperature = request.POST.get("body_temperature")
+                spo2 = request.POST.get("spo2")
+                systolic_bp = request.POST.get("blood_pressure_systolic")
+                diastolic_bp = request.POST.get("blood_pressure_diastolic")
 
-    patients = Patient.objects.all()
-    return render(request, 'predict_health.html', {'patients': patients})
+                # ✅ Ensure no missing values
+                if None in [heart_rate, respiration_rate, body_temperature, spo2, systolic_bp, diastolic_bp] or \
+                   "" in [heart_rate, respiration_rate, body_temperature, spo2, systolic_bp, diastolic_bp]:
+                    raise ValueError("Incomplete form data. Please fill in all fields.")
+
+                # ✅ Convert to float
+                heart_rate = float(heart_rate)
+                respiration_rate = float(respiration_rate)
+                body_temperature = float(body_temperature)
+                spo2 = float(spo2)
+                systolic_bp = float(systolic_bp)
+                diastolic_bp = float(diastolic_bp)
+
+                # ✅ Convert data into NumPy array and reshape
+                input_data = np.array([[heart_rate, respiration_rate, body_temperature, spo2, systolic_bp, diastolic_bp]])
+
+                # ✅ Scale input data
+                input_data_scaled = scaler.transform(input_data)
+
+                # ✅ Make a prediction
+                prediction = xgb_model.predict(input_data_scaled)
+                predicted_label = label_encoder.inverse_transform(prediction)[0]  # Convert back to category name
+
+                # ✅ Set health status message
+                if predicted_label == "Low Risk":
+                    health_status = "✅ You are Healthy!"
+                elif predicted_label == "Moderate Risk":
+                    health_status = "⚠️ You may need to consult a doctor."
+                else:
+                    health_status = "❌ Immediate medical attention is required!"
+
+            except ValueError as e:
+                health_status = f"⚠️ Error: {str(e)}"
+            except Exception as e:
+                health_status = f"❌ Unexpected error occurred: {str(e)}"
+
+        return render(request, "predict_health.html", {
+            "patient": patient,
+            "patients": patients,  # Ensure patient list is always available
+            "health_status": health_status
+        })
+
+    # If no specific patient is selected, return all patients
+    return render(request, "predict_health.html", {
+        "patients": patients
+    })
+
 
 def upload_report(request):
     return render(request, 'upload_report.html')

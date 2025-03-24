@@ -5,7 +5,11 @@
 <div class="container mt-4">
     <!-- Back Button -->
     <button class="btn btn-secondary mb-3" onclick="window.history.back()">⬅ Back</button>
-
+    {% if health_status %}
+    <div class="alert alert-info text-center">
+        <strong>Health Status:</strong> {{ health_status }}
+    </div>
+    {% endif %}
     <div class="card shadow-lg p-4">
         <h2 class="text-center mb-4 text-primary">Health Prediction</h2>
 
@@ -51,8 +55,15 @@
                     <td>
                         <form method="POST" action="{% url 'predict_health_with_id' patient.id %}">
                             {% csrf_token %}
+                            <input type="hidden" name="body_temperature" value="{{ patient.body_temperature }}">
+                            <input type="hidden" name="spo2" value="{{ patient.spo2 }}">
+                            <input type="hidden" name="heart_rate" value="{{ patient.heart_rate }}">
+                            <input type="hidden" name="respiration_rate" value="{{ patient.respiration_rate }}">
+                            <input type="hidden" name="blood_pressure_systolic" value="{{ patient.blood_pressure_systolic }}">
+                            <input type="hidden" name="blood_pressure_diastolic" value="{{ patient.blood_pressure_diastolic }}">
                             <button type="submit" class="btn btn-success btn-sm">Predict</button>
                         </form>
+                        
                     </td>
                 </tr>
                 {% empty %}
